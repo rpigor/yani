@@ -19,58 +19,6 @@ entity top is
 end top;
 
 architecture rtl of top is
-
-    component alu is
-        port (
-            alu_op_i    : in std_ulogic_vector(ALU_OP_WIDTH-1 downto 0);
-            acc_i       : in std_ulogic_vector(BIT_WIDTH-1 downto 0);
-            mem_i       : in std_ulogic_vector(BIT_WIDTH-1 downto 0);
-
-            alu_res_o   : out std_ulogic_vector(BIT_WIDTH-1 downto 0);
-            alu_zero_o  : out std_ulogic;
-            alu_neg_o   : out std_ulogic
-        );
-    end component;
-
-    component control is
-        port (
-            clk_i               : in std_ulogic;
-            rst_i               : in std_ulogic;
-            start_i             : in std_ulogic;
-
-            instr_reg_i         : in std_ulogic_vector(INSTR_WIDTH-1 downto 0);
-            neg_zero_reg_i      : in std_ulogic_vector(1 downto 0);
-
-            alu_op_o            : out std_ulogic_vector(ALU_OP_WIDTH-1 downto 0);
-            sel_mem_addr_o      : out std_ulogic;
-            incr_pc_o           : out std_ulogic;
-            write_mem_o         : out std_ulogic;
-            load_pc_reg_o       : out std_ulogic;
-            load_instr_reg_o    : out std_ulogic;
-            load_mem_addr_reg_o : out std_ulogic;
-            load_mem_data_reg_o : out std_ulogic;
-            load_acc_reg_o      : out std_ulogic;
-            load_neg_zero_reg_o : out std_ulogic;
-
-            done_o              : out std_ulogic
-        );
-    end component;
-
-    component memory is
-        generic (
-            MEM_FILE_PATH   : string;
-            MEM_SIZE        : integer
-        );
-        port (
-            rst_i   : in std_ulogic;
-            addr_i  : in std_ulogic_vector(BIT_WIDTH-1 downto 0);
-            data_i  : in std_ulogic_vector(BIT_WIDTH-1 downto 0);
-            write_i : in std_ulogic;
-
-            mem_o   : out std_ulogic_vector(BIT_WIDTH-1 downto 0)
-        );
-    end component;
-
     signal alu_op               : std_ulogic_vector(ALU_OP_WIDTH-1 downto 0);
     signal mem_output           : std_ulogic_vector(BIT_WIDTH-1 downto 0);
     signal mux_mem_addr_output  : std_ulogic_vector(BIT_WIDTH-1 downto 0);
