@@ -21,6 +21,7 @@ architecture rtl of control_tb is
 
     signal alu_op               : std_ulogic_vector(ALU_OP_WIDTH-1 downto 0);
     signal sel_mem_addr         : std_ulogic;
+    signal sel_mem_data         : std_ulogic;
     signal incr_pc              : std_ulogic;
     signal write_mem            : std_ulogic;
     signal load_pc_reg          : std_ulogic;
@@ -43,6 +44,7 @@ begin
 
         alu_op_o            => alu_op,
         sel_mem_addr_o      => sel_mem_addr,
+        sel_mem_data_o      => sel_mem_data,
         incr_pc_o           => incr_pc,
         write_mem_o         => write_mem,
         load_pc_reg_o       => load_pc_reg,

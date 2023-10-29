@@ -74,12 +74,14 @@ architecture rtl of top is
     signal alu_op               : std_ulogic_vector(ALU_OP_WIDTH-1 downto 0);
     signal mem_output           : std_ulogic_vector(BIT_WIDTH-1 downto 0);
     signal mux_mem_addr_output  : std_ulogic_vector(BIT_WIDTH-1 downto 0);
+    signal mux_mem_data_output  : std_ulogic_vector(BIT_WIDTH-1 downto 0);
 
     signal alu_res              : std_ulogic_vector(BIT_WIDTH-1 downto 0);
     signal alu_zero             : std_ulogic;
     signal alu_neg              : std_ulogic;
 
     signal sel_mem_addr         : std_ulogic;
+    signal sel_mem_data         : std_ulogic;
     signal incr_pc              : std_ulogic;
     signal write_mem            : std_ulogic;
     signal load_pc_reg          : std_ulogic;
@@ -100,7 +102,7 @@ begin
     alu_inst: entity yani.alu port map (
         alu_op_i    => alu_op,
         acc_i       => acc_reg,
-        mem_i       => mem_output,
+        mem_i       => mem_data_reg,
 
         alu_res_o   => alu_res,
         alu_zero_o  => alu_zero,
@@ -117,6 +119,7 @@ begin
 
         alu_op_o            => alu_op,
         sel_mem_addr_o      => sel_mem_addr,
+        sel_mem_data_o      => sel_mem_data,
         incr_pc_o           => incr_pc,
         write_mem_o         => write_mem,
         load_pc_reg_o       => load_pc_reg,
@@ -142,7 +145,7 @@ begin
             if incr_pc = '1' then
                 pc_reg <= std_ulogic_vector(unsigned(pc_reg) + 1);
             elsif load_pc_reg = '1' then
-                pc_reg <= mem_output;
+                pc_reg <= mem_data_reg;
             else
                 pc_reg <= pc_reg;
             end if;
@@ -154,7 +157,7 @@ begin
             end if;
 
             if load_instr_reg = '1' then
-                instr_reg <= mem_output(BIT_WIDTH-1 downto INSTR_WIDTH);
+                instr_reg <= mem_data_reg(BIT_WIDTH-1 downto INSTR_WIDTH);
             else
                 instr_reg <= instr_reg;
             end if;
@@ -166,7 +169,7 @@ begin
             end if;
 
             if load_mem_data_reg = '1' then
-                mem_data_reg <= acc_reg;
+                mem_data_reg <= mux_mem_data_output;
             else
                 mem_data_reg <= mem_data_reg;
             end if;
@@ -192,5 +195,7 @@ begin
         mem_o   => mem_output
     );
 
-    mux_mem_addr_output <= mem_output when (sel_mem_addr = '1') else pc_reg;
+    mux_mem_addr_output <= mem_data_reg when (sel_mem_addr = '1') else pc_reg;
+
+    mux_mem_data_output <= acc_reg when (sel_mem_data = '1') else mem_output;
 end rtl;

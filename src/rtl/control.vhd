@@ -16,6 +16,7 @@ entity control is
 
         alu_op_o            : out std_ulogic_vector(ALU_OP_WIDTH-1 downto 0);
         sel_mem_addr_o      : out std_ulogic;
+        sel_mem_data_o      : out std_ulogic;
         incr_pc_o           : out std_ulogic;
         write_mem_o         : out std_ulogic;
         load_pc_reg_o       : out std_ulogic;
@@ -57,6 +58,7 @@ begin
         done_o <= '0';
 
         sel_mem_addr_o <= '0';
+        sel_mem_data_o <= '0';
         incr_pc_o <= '0';
         write_mem_o <= '0';
 
@@ -107,6 +109,7 @@ begin
                         next_state <= STATE_EXECUTE_1;
                 end case;
             when STATE_EXECUTE_1 =>
+                load_mem_data_reg_o <= '1';
                 incr_pc_o <= '1';
                 next_state <= STATE_EXECUTE_2;
             when STATE_EXECUTE_2 =>
@@ -114,10 +117,11 @@ begin
                 load_mem_addr_reg_o <= '1';
                 next_state <= STATE_EXECUTE_3;
             when STATE_EXECUTE_3 =>
+                if instr_reg_i = INSTR_STA then sel_mem_data_o <= '1'; else sel_mem_data_o <= '0'; end if;
                 load_mem_data_reg_o <= '1';
                 next_state <= STATE_EXECUTE_4;
             when STATE_EXECUTE_4 =>
-                if instr_reg_i = instr_sta then
+                if instr_reg_i = INSTR_STA then
                     write_mem_o <= '1';
                 else
                     load_acc_reg_o <= '1';
