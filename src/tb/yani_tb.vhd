@@ -10,13 +10,15 @@ entity yani_tb is
 end yani_tb;
 
 architecture rtl of yani_tb is
-    constant clk_period         : time := 10 ns;
+    constant CLK_PERIOD         : time := 10 ns;
 
     signal clk                  : std_ulogic;
     signal rst                  : std_ulogic;
     signal start                : std_ulogic;
 
     signal done                 : std_ulogic;
+
+    shared variable done_sim    : boolean := false;
 begin
 
     dut: entity yani.top generic map (
@@ -32,22 +34,29 @@ begin
 
     process
     begin
-        clk <= '1';
-        wait for clk_period / 2;
-        clk <= '0';
-        wait for clk_period / 2;
+        if done_sim = false then
+            clk <= '1';
+            wait for CLK_PERIOD / 2;
+            clk <= '0';
+            wait for CLK_PERIOD / 2;
+        else
+            wait;
+        end if;
     end process;
 
     process
     begin
         rst <= '1';
         start <= '0';
-        wait for clk_period;
+        wait for CLK_PERIOD;
         rst <= '0';
-        wait for clk_period;
+        wait for CLK_PERIOD;
         start <= '1';
-        wait for clk_period;
+        wait for CLK_PERIOD;
         start <= '0';
+        wait until done = '1';
+        report "Finished executing!";
+        done_sim := true;
         wait;
     end process;
 

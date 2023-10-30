@@ -10,7 +10,7 @@ entity control_tb is
 end control_tb;
 
 architecture rtl of control_tb is
-    constant clk_period : time := 10 ns;
+    constant CLK_PERIOD         : time := 10 ns;
 
     signal clk                  : std_ulogic;
     signal rst                  : std_ulogic;
@@ -32,6 +32,8 @@ architecture rtl of control_tb is
     signal load_neg_zero_reg    : std_ulogic;
 
     signal done                 : std_ulogic;
+
+    shared variable done_sim    : boolean := false;
 begin
 
     dut: entity yani.control port map (
@@ -59,27 +61,35 @@ begin
 
     process
     begin
-        clk <= '1';
-        wait for clk_period / 2;
-        clk <= '0';
-        wait for clk_period / 2;
+        if done_sim = false then
+            clk <= '1';
+            wait for CLK_PERIOD / 2;
+            clk <= '0';
+            wait for CLK_PERIOD / 2;
+        else
+            wait;
+        end if;
     end process;
 
     process
     begin
         rst <= '1';
-        wait for clk_period;
+        wait for CLK_PERIOD;
         rst <= '0';
-        wait for clk_period;
+        wait for CLK_PERIOD;
         instr_reg <= "0100";
         neg_zero_reg <= "00";
         start <= '1';
-        wait for clk_period;
+        wait for CLK_PERIOD;
         start <= '0';
-        wait for 8*clk_period;
+        wait for 8*CLK_PERIOD;
         instr_reg <= "0101";
-        wait for 8*clk_period;
+        wait for 8*CLK_PERIOD;
         instr_reg <= "1111";
+        wait until done = '1';
+        report "Finished executing!";
+        done_sim := true;
+        wait;
     end process;
 
 end rtl;
