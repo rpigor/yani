@@ -1,6 +1,6 @@
 # YANI
 
-YANI (Yet Another NEANDER Implementation), as the name suggests, is a microarchitecture implementation of the hypothetical processor NEANDER using VHDL. The project was developed as an assignment for the Sistemas Digitals - *INF01175* class.
+YANI (Yet Another NEANDER Implementation), as the name suggests, is a microarchitecture implementation of the hypothetical processor NEANDER written in VHDL. The project was developed as an assignment for the Sistemas Digitals - *INF01175* class.
 
 ### Introduction
 
@@ -33,13 +33,25 @@ In this project, the original ISA will be extended to include four more instruct
 | 1101      | `SHL` <addr>      | `ACC <- ACC << MEM(addr)`  |
 | 1111      | `HLT`             | -                          |
 
-The main entities of YANI are the ALU, memory, register bank and control unit. The following block diagram illustrates how they are connected:
+The main entities of YANI are the ALU, memory, register bank, and control unit. The following block diagram illustrates how they are connected:
 
 ![Block diagram](assets/yani_diagram.svg)
 
 One thing to note is that the memory was implemented as an asynchronous read RAM, but the memory unit can be made compatible with synchronous block RAMs and other memories after some tweaks.
 
 ### RTL simulation
+
+The design can be simulated using [`src/tb/yani_tb.vhd`](src/tb/yani_tb.vhd). This testbench is pretty simple: it instantiates the top entity and executes the program in [`sw/mult_sum.mem`](sw/mult_sum.mem), which defines the multiplication of 3 and 5 as repeated addition. Other example memory images can be found in the [`sw/`](sw/) directory.
+
+When simulating, it is important to confirm that the memory image is accessible to the simulator. If you are having problems with this, copy the memory image to the current working directory or use its full path in the `MEMORY_IMAGE_FILE_PATH` top parameter.
+
+Additionally, the work library should be named `yani` instead of the default `work`. This can be set with the `--work=<name>` flag in GHDL or configured in the project settings in ModelSim and other simulators.
+
+After simulating the testbench, we can view the resulting waveforms in GTKWave:
+
+![Simulation viewed in GTKWave](assets/sim_gtkwave.png)
+
+The other testbenches in [`src/tb/`](src/tb/) verify the individual units composing the top entity.
 
 ### References
 
