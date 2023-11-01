@@ -4,7 +4,7 @@ use ieee.numeric_std.all;
 
 package constants is
     constant BIT_WIDTH      : integer := 8;
-    constant MEMORY_SIZE    : integer := 512;
+    constant MEMORY_SIZE    : integer := 256;
 
     type mem_t is array (0 to MEMORY_SIZE-1) of std_ulogic_vector(BIT_WIDTH-1 downto 0);
     type mem_file_t is file of character;
